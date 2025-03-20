@@ -1,109 +1,144 @@
-import { StyleSheet, Image, Platform } from 'react-native';
-
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import {
+	useDeleteCatPhotoMutation,
+	useFetchUploadedCatsPhotosQuery,
+	useUploadCatsPhotoMutation,
+} from "../features/gallery-slice";
+import CatImage from "@/components/CatImage";
+import { useMemo, useState } from "react";
 
 export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
-  );
+	const images = useMemo(
+		() => [
+			require("@/assets/images/cat1.jpg").uri,
+			require("@/assets/images/cat2.jpg").uri,
+			require("@/assets/images/cat3.jpg").uri,
+			require("@/assets/images/cat4.jpg").uri,
+			require("@/assets/images/cat5.jpg").uri,
+			require("@/assets/images/cat6.jpg").uri,
+			require("@/assets/images/cat7.jpg").uri,
+			require("@/assets/images/cat8.jpg").uri,
+			require("@/assets/images/cat9.jpg").uri,
+			require("@/assets/images/cat10.jpg").uri,
+			require("@/assets/images/cat11.jpg").uri,
+			require("@/assets/images/cat12.jpg").uri,
+			require("@/assets/images/cat13.jpg").uri,
+			require("@/assets/images/cat14.jpg").uri,
+			require("@/assets/images/cat15.jpg").uri,
+			require("@/assets/images/cat16.jpg").uri,
+			require("@/assets/images/cat17.jpg").uri,
+			require("@/assets/images/cat18.jpg").uri,
+			require("@/assets/images/cat19.jpg").uri,
+			require("@/assets/images/cat20.jpg").uri,
+		],
+		[]
+	);
+	const numColumns = 4;
+	const { data = [], isFetching, refetch } = useFetchUploadedCatsPhotosQuery();
+	const [deleteCatPhoto] = useDeleteCatPhotoMutation();
+	const [uploadCatPhoto] = useUploadCatsPhotoMutation();
+	const [isUploading, setisUploading] = useState(false);
+
+	if (isFetching && data.length === 0) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+				<ThemedText>Loading...</ThemedText>
+			</View>
+		);
+	}
+	const handleDelete = async (id: string) => {
+		try {
+			await deleteCatPhoto(id);
+			refetch();
+
+			alert("Cat photo deleted successfully");
+		} catch (err) {
+			console.error("Failed to delete:", err);
+		}
+	};
+
+	const handleAddCat = async () => {
+		setisUploading(true);
+		// Generate a random cat image file name
+		const randomIndex = Math.floor(Math.random() * 20) + 1;
+
+		const response = await fetch(images[randomIndex]);
+
+		console.log(randomIndex);
+		// Fetch the image as a Blob
+		const blob = await response.blob();
+		const formData = new FormData();
+
+		formData.append("file", blob);
+
+		// Upload logic
+		try {
+			await uploadCatPhoto(formData);
+			refetch();
+			setisUploading(false);
+			alert("Cat photo uploaded successfully");
+		} catch (error) {
+			setisUploading(false);
+			console.error("Failed to upload:", error);
+			alert("Failed to upload cat photo");
+		}
+	};
+	return (
+		<>
+			<View style={styles.stepContainer}>
+				<ThemedText>Number of cats: {data.length}</ThemedText>
+			</View>
+			<View style={styles.topButtonContainer}>
+				<TouchableOpacity style={styles.button} onPress={handleAddCat}>
+					<ThemedText style={styles.buttonText}>
+						{isUploading ? "Uploading..." : "Add Cat"}
+					</ThemedText>
+				</TouchableOpacity>
+			</View>
+			{/* Cat Photos Grid */}
+			<FlatList
+				data={data}
+				numColumns={numColumns}
+				columnWrapperStyle={{
+					gap: 40,
+					padding: 20,
+					margin: 5,
+				}}
+				keyExtractor={(item, index) => index.toString()}
+				renderItem={({ item }) => (
+					<CatImage
+						uri={item.url}
+						showDeleteIcon={true}
+						onRemove={() => {
+							console.log("Delete button pressed for item:", item.id);
+							handleDelete(item.id);
+						}}
+					/>
+				)}
+			/>
+		</>
+	);
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+	topButtonContainer: {
+		alignItems: "center",
+		marginVertical: 10, // Adds spacing at the top
+	},
+	button: {
+		backgroundColor: "#4CAF50",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 8,
+	},
+	buttonText: {
+		color: "#fff",
+		fontSize: 16,
+		fontWeight: "bold",
+	},
+	stepContainer: {
+		gap: 8,
+		marginBottom: 8,
+	},
 });

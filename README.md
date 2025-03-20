@@ -1,20 +1,46 @@
-# Welcome to your Expo app 👋
+# TPG-Demo React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This app interacts with The Cat API, enabling users to perform CRUD operations (Create, Read, Update, Delete) on cat images.
+
+Features:
+Fetch Random Images – Users can browse random cat images from The Cat API.
+Upload Images – Users can upload their own cat images to their account, linked with an API key.
+Delete Images – Users can remove uploaded images from their account.
+Update Uploads List – Users can refresh and manage their uploaded images.
+
+the app has two sections uploads section and public gallery section for the user to navigate.
 
 ## Get started
 
-1. Install dependencies
+### Clone the Repository
 
-   ```bash
-   npm install
-   ```
+```bash
+git clone <repo-link>
+cd tpgdemo
+```
 
-2. Start the app
+### Add API Key
 
-   ```bash
-    npx expo start
-   ```
+1. Get your api key from https://thecatapi.com/
+2. Open the project in vscode.
+3. Create .env file in the root.
+4. Add your API key:
+
+```bash
+CATS_API_KEY=your_api_key_here
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Start the app
+
+```bash
+ npx expo start
+```
 
 In the output, you'll find options to open the app in a
 
@@ -23,28 +49,12 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Design Decisions
 
-## Get a fresh project
+### Modern Redux with Redux Toolkit and RTK Query
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Effortless Data Fetching: Simplifies API calls with auto-generated hooks.
+- Built-in Caching: Reduces unnecessary network requests and improves performance.
+- Auto Refetching: Keeps data fresh with background updates.
+- Less Boilerplate: `createSlice` simplifies reducers and actions.
+- Better Performance: Optimized state updates reduce re-renders.
