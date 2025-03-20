@@ -53,7 +53,7 @@ In the output, you'll find options to open the app in a
 
 ### Modern Redux with Redux Toolkit and RTK Query
 
-- Effortless Data Fetching: Simplifies API calls with auto-generated hooks.
+- Simplifies API calls with auto-generated hooks.
 - Built-in Caching: Reduces unnecessary network requests and improves performance.
 - Auto Refetching: Keeps data fresh with background updates.
 - Less Boilerplate: `createSlice` simplifies reducers and actions.
